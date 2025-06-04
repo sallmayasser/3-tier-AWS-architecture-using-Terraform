@@ -1,0 +1,21 @@
+{
+  "name": "mongo-express-backend",
+  "version": "1.0.0",
+  "description": "A simple Express backend connecting to MongoDB using TLS",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "dotenv": "^16.3.1",
+    "express": "^4.19.2",
+    "mongodb": "^6.5.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.3"
+  }
+}
