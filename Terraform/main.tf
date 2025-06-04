@@ -91,9 +91,9 @@ module "private-sg" {
     http = {
       cidr_ipv4                    = null
       referenced_security_group_id = module.priv-alb-sg.sg_id
-      from_port                    = 80
+      from_port                    = 3000
       ip_protocol                  = "tcp"
-      to_port                      = 80
+      to_port                      = 3000
     }
     ssh = {
       cidr_ipv4                    = null
@@ -205,6 +205,7 @@ module "pub-alb" {
   health_check_config = {
     path                = "/"
     protocol            = "HTTP"
+    port                = 80
     healthy_threshold   = 2
     unhealthy_threshold = 2
     timeout             = 5
@@ -219,13 +220,14 @@ module "priv-alb" {
   alb-name           = "Internal-alb"
   isInternal         = true
   security-group-ids = [module.priv-alb-sg.sg_id]
-  subnet-ids         = [module.vpc.public-subnet-id-1, module.vpc.public-subnet-id-2]
+  subnet-ids         = [module.vpc.private-subnet-id-1, module.vpc.private-subnet-id-2]
   vpc-id             = module.vpc.vpc-id
   target-gp-name     = "backend-target-group"
 
   health_check_config = {
     path                = "/health"
     protocol            = "HTTP"
+    port                = 3000
     healthy_threshold   = 2
     unhealthy_threshold = 2
     timeout             = 5

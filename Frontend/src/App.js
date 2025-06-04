@@ -1,17 +1,26 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
+
 const apiUrl = process.env.REACT_APP_API_URL;
 
 function App() {
   const [message, setMessage] = useState("");
-  useEffect(() => {
+
+  const fetchMessage = () => {
     fetch(`${apiUrl}/api/message`)
       .then((res) => res.json())
-      .then((data) => setMessage(data.message));
-  }, []);
+      .then((data) => setMessage(data.message))
+      .catch((err) => {
+        console.error("Error fetching message:", err);
+        setMessage("Error contacting backend");
+      });
+  };
+
   return (
     <div>
       <h1>Frontend</h1>
-      <p>Message from backend: {message}</p>
+      <h2>Made by Salma Yasser</h2>
+      <button onClick={fetchMessage}>Get Message from Backend</button>
+      <p>{message}</p>
     </div>
   );
 }

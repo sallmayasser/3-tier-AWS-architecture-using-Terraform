@@ -32,6 +32,7 @@ variable "health_check_config" {
   type = object({
     path                = string
     protocol            = string
+    port                = number
     healthy_threshold   = number
     unhealthy_threshold = number
     timeout             = number

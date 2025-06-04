@@ -3,6 +3,8 @@
 # Update and install dependencies
 apt update -y
 apt install -y nginx git nodejs npm
+sudo npm install -g n
+sudo n 18
 
 # Clone your React app from GitHub
 cd /home/ubuntu
@@ -13,7 +15,8 @@ cd 3-tier-AWS-architecture-using-Terraform/Frontend
 npm install
 
 # Build with dynamic backend URL from Terraform
-REACT_APP_API_URL="http://${backend_alb_dns}" npm run build
+REACT_APP_API_URL="http://${backend_alb_dns}" 
+npm run build
 
 # Copy build files to Nginx
 cp -r build/* /var/www/html/
