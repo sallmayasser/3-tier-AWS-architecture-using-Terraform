@@ -21,7 +21,14 @@ variable "target-gp-name" {
   type        = string
   description = "the name of target group"
 }
-
+variable "port" {
+  type = number
+  description = "the port number of target group"
+}
+variable "listener-port" {
+  type = number
+  description = "the port number of target group"
+}
 variable "vpc-id" {
   type        = string
   description = "the id of Vpc"

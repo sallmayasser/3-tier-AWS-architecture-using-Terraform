@@ -22,10 +22,13 @@ resource "aws_docdb_cluster_instance" "docdb_instance" {
   availability_zone  = var.azs[count.index % length(var.azs)]
 
 }
+
 # ///////////////////// Creating the MongoDB URL ///////////////////////
 locals {
+  # mongo_uri = "mongodb://root:${var.db_password}@{aws_docdb_cluster.docdb endpoint}:27017/?tls=true&tlsCAFile=global-bundle.pem&retryWrites=false"
   mongo_uri = "mongodb://${var.db_username}:${var.db_password}@${aws_docdb_cluster.docdb.endpoint}:27017/mydb?tls=true&retryWrites=false"
 }
+
 
 # /////////////////////// Craeting SSM parameter for MongoDb URL //////////////////
 resource "aws_ssm_parameter" "mongo_uri" {

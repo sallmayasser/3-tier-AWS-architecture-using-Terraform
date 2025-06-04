@@ -75,7 +75,7 @@ module "priv-alb-sg" {
       referenced_security_group_id = module.public-sg.sg_id
       from_port                    = 80
       ip_protocol                  = "tcp"
-      to_port                      = 80
+      to_port                      = 3000
 
     }
   }
@@ -197,6 +197,8 @@ module "pub-alb" {
   source             = "./modules/ALB"
   alb-name           = "External-alb"
   isInternal         = false
+  port               = 80
+  listener-port      = 80
   security-group-ids = [module.pub-alb-sg.sg_id]
   subnet-ids         = [module.vpc.public-subnet-id-1, module.vpc.public-subnet-id-2]
   vpc-id             = module.vpc.vpc-id
@@ -219,6 +221,8 @@ module "priv-alb" {
   source             = "./modules/ALB"
   alb-name           = "Internal-alb"
   isInternal         = true
+  port               = 3000
+  listener-port      = 3000
   security-group-ids = [module.priv-alb-sg.sg_id]
   subnet-ids         = [module.vpc.private-subnet-id-1, module.vpc.private-subnet-id-2]
   vpc-id             = module.vpc.vpc-id
@@ -231,7 +235,7 @@ module "priv-alb" {
     healthy_threshold   = 2
     unhealthy_threshold = 2
     timeout             = 5
-    interval            = 15
+    interval            = 30
     matcher             = "200"
   }
 }

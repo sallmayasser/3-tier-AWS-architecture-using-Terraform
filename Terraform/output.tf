@@ -7,8 +7,7 @@ output "int-dns" {
   value       = "http://${module.priv-alb.alb-dns}"
 }
 
-output "mysql-endpoint" {
+output "DocumentDb-endpoint" {
   description = "the mysql endpoint"
   value = module.databases.docDb-endpoint
-  
 }
