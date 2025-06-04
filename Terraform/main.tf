@@ -143,7 +143,6 @@ data "template_file" "frontend_user_data" {
   vars = {
     backend_alb_dns = module.priv-alb.alb-dns
   }
-  depends_on = [module.priv-alb]
 }
 
 data "template_file" "backend_user_data" {
@@ -151,7 +150,6 @@ data "template_file" "backend_user_data" {
   vars = {
     ssm_param_name = module.databases.ssm_param_name
   }
-  depends_on = [module.databases]
 }
 # ////////////////////////// FrontEnd ASG //////////////////////////
 module "frontend-asg" {
@@ -168,7 +166,7 @@ module "frontend-asg" {
   vpc-zone-ids       = [module.vpc.public-subnet-id-1, module.vpc.public-subnet-id-2]
   target-grps-arn    = [module.pub-alb.target_group_arn]
   instance-name      = "frontend-instance"
-  depends_on         = [module.pub-alb]
+  depends_on         = [module.priv-alb]
 }
 # ///////////////////////////// BackEnd ASG //////////////////////////
 module "backend-asg" {
@@ -185,7 +183,7 @@ module "backend-asg" {
   vpc-zone-ids       = [module.vpc.private-subnet-id-1, module.vpc.private-subnet-id-2]
   target-grps-arn    = [module.priv-alb.target_group_arn]
   instance-name      = "backend-instance"
-  depends_on         = [module.priv-alb]
+  depends_on         = [module.databases]
 }
 
 #  ------------------------------------------
@@ -219,7 +217,7 @@ module "pub-alb" {
 module "priv-alb" {
   source             = "./modules/ALB"
   alb-name           = "Internal-alb"
-  isInternal         = false
+  isInternal         = true
   security-group-ids = [module.priv-alb-sg.sg_id]
   subnet-ids         = [module.vpc.public-subnet-id-1, module.vpc.public-subnet-id-2]
   vpc-id             = module.vpc.vpc-id
