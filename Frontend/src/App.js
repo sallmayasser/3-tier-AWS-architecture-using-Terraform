@@ -1,6 +1,7 @@
 import { useState } from "react";
 
 const apiUrl = process.env.REACT_APP_API_URL;
+console.log("Backend API URL is:", apiUrl);
 
 function App() {
   const [message, setMessage] = useState("");
