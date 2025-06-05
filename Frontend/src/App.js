@@ -1,13 +1,13 @@
 import { useState } from "react";
 
-const apiUrl = process.env.REACT_APP_API_URL;
+const apiUrl = process.env.REACT_APP_API_URL || "/api";
 console.log("Backend API URL is:", apiUrl);
 
 function App() {
   const [message, setMessage] = useState("");
 
   const fetchMessage = () => {
-    fetch(`${apiUrl}/api/message`)
+    fetch(`${apiUrl}/message`)
       .then((res) => res.json())
       .then((data) => setMessage(data.message))
       .catch((err) => {
