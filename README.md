@@ -2,13 +2,26 @@
 
 This project provisions a fully scalable and modular AWS infrastructure using **Terraform**, following best practices for **high availability**, **security**, and **automation**. It includes VPC setup, public/private subnets, ALBs, Auto Scaling Groups for frontend and backend services, secure database provisioning, and modular security group configuration.
 
-## Project Architecture
+## 🗞️ Project Architecture
 
 ![Infrastructure](./images/infra.jpeg)
 
 ---
 
-## Project Overview
+## 📷 Project Screenshoots
+
+### FrontEnd
+
+![FrontEnd](./images/frontend.png)
+
+The frontend interface showcasing the user interaction. Upon clicking the button, a request is sent to the DocumentDB service to retrieve or manipulate data.
+
+### BackEnd
+
+![BackEnd](./images/backend.png)
+The backend system handling incoming requests, processing logic, and communicating with the DocumentDB. This illustrates the server-side workflow supporting the frontend operations.
+
+## ℹ️ Project Overview
 
 This project implements a classic 3-tier web architecture using Terraform:
 
@@ -34,13 +47,15 @@ This project implements a classic 3-tier web architecture using Terraform:
 ```
 .
 ├── Backend
-│   ├── package.json
-│   └── server.js
+│   ├── index.js
+│   └── package.json
 ├── Frontend
 │   ├── package.json
 │   ├── public
+│   │   └── index.html
 │   └── src
-│       └── App.js
+│       ├── App.js
+│       └── index.js
 └── Terraform
     ├── backend.tf
     ├── main.tf
@@ -60,6 +75,9 @@ This project implements a classic 3-tier web architecture using Terraform:
     │   │   ├── main.tf
     │   │   ├── output.tf
     │   │   └── variable.tf
+    │   ├── IAM
+    │   │   ├── main.tf
+    │   │   └── output.tf
     │   ├── security-groups
     │   │   ├── main.tf
     │   │   ├── output.tf
@@ -73,6 +91,7 @@ This project implements a classic 3-tier web architecture using Terraform:
     ├── provider.tf
     ├── terraform.tfvars
     └── variables.tf
+
 ```
 
 ---
@@ -108,8 +127,15 @@ Before you begin, ensure you have:
    ```
 
 ---
+2. **Generate SSH Key:**
+```bash
+cd terraform
+ssh-keygen -f mykey 
+chmod 400 my-key
+cp my-key ~/.ssh/my-key
+```
 
-2. **Update Variables:**
+3. **Update Variables:**
    for example
 
    ```bash
@@ -122,7 +148,7 @@ Before you begin, ensure you have:
 
 ---
 
-3. **Initialize Terraform:**
+4. **Initialize Terraform:**
 
    ```bash
    terraform init
@@ -130,7 +156,7 @@ Before you begin, ensure you have:
 
 ---
 
-4. **Preview the plan:**
+5. **Preview the plan:**
 
    ```bash
    terraform plan -auto-approve -var db_username=<USER_NAME> -var db_password=<PASSWORD>
@@ -138,7 +164,7 @@ Before you begin, ensure you have:
 
 ---
 
-5. **Apply the configuration:**
+6. **Apply the configuration:**
 
    ```bash
    terraform apply -auto-approve -var db_username=<USER_NAME> -var db_password=<PASSWORD>
