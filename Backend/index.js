@@ -12,6 +12,7 @@ app.get("/api/message", async (req, res) => {
   try {
     await client.connect();
     const db = client.db("mydb");
+    
     const message = await db.collection("messages").findOne({});
     res.send({ message: message?.text || "Hello from backend!" });
   } catch (err) {

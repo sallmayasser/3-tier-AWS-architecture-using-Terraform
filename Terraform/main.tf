@@ -70,14 +70,30 @@ module "priv-alb-sg" {
   vpc_id      = module.vpc.vpc-id
 
   ingress_rules = {
-    http = {
+    # http = {
+    #   cidr_ipv4                    = null
+    #   referenced_security_group_id = module.public-sg.sg_id
+    #   from_port                    = 80
+    #   ip_protocol                  = "tcp"
+    #   to_port                      = 80
+
+    # }
+    app = {
       cidr_ipv4                    = null
       referenced_security_group_id = module.public-sg.sg_id
-      from_port                    = 80
+      from_port                    = 3000
       ip_protocol                  = "tcp"
       to_port                      = 3000
 
     }
+    # test = {
+    #   cidr_ipv4                    = null
+    #   referenced_security_group_id = module.public-sg.sg_id
+    #   from_port                    = 80
+    #   ip_protocol                  = "tcp"
+    #   to_port                      = 3000
+
+    # }
   }
 
 }
@@ -115,7 +131,7 @@ module "db-sg" {
   vpc_id      = module.vpc.vpc-id
 
   ingress_rules = {
-    mysql = {
+    mongoDb = {
       cidr_ipv4                    = null
       referenced_security_group_id = module.private-sg.sg_id
       from_port                    = 27017 # MongoDb port 
@@ -124,7 +140,14 @@ module "db-sg" {
 
     }
   }
-
+}
+#  ------------------------------------------
+# |                                          | 
+# |              create IAM                  |
+# |                                          |
+#  ------------------------------------------
+module "IAM" {
+  source = "./modules/IAM"
 }
 #  ------------------------------------------
 # |                                          | 
@@ -148,42 +171,45 @@ data "template_file" "frontend_user_data" {
 data "template_file" "backend_user_data" {
   template = file("./modules/ASG/UserData/backend.sh.tpl")
   vars = {
-    ssm_param_name = module.databases.ssm_param_name
+    ssm_param_name     = module.databases.ssm_param_name
+    AWS_DEFAULT_REGION = var.aws-region
   }
 }
 # ////////////////////////// FrontEnd ASG //////////////////////////
 module "frontend-asg" {
-  source             = "./modules/ASG"
-  template-name      = "frontend-template"
-  instance-type      = var.instance-type
-  my-key             = aws_key_pair.my_key.key_name
-  user-data          = base64encode(data.template_file.frontend_user_data.rendered)
-  security-group-ids = [module.public-sg.sg_id]
-  ASG-name           = "frontend-asg"
-  max_size           = 3
-  min_size           = 1
-  desired_capacity   = 2
-  vpc-zone-ids       = [module.vpc.public-subnet-id-1, module.vpc.public-subnet-id-2]
-  target-grps-arn    = [module.pub-alb.target_group_arn]
-  instance-name      = "frontend-instance"
-  depends_on         = [module.priv-alb]
+  source                = "./modules/ASG"
+  template-name         = "frontend-template"
+  instance-type         = var.instance-type
+  my-key                = aws_key_pair.my_key.key_name
+  instance_profile_name = null
+  user-data             = base64encode(data.template_file.frontend_user_data.rendered)
+  security-group-ids    = [module.public-sg.sg_id]
+  ASG-name              = "frontend-asg"
+  max_size              = 3
+  min_size              = 1
+  desired_capacity      = 2
+  vpc-zone-ids          = [module.vpc.public-subnet-id-1, module.vpc.public-subnet-id-2]
+  target-grps-arn       = [module.pub-alb.target_group_arn]
+  instance-name         = "frontend-instance"
+  depends_on            = [module.priv-alb]
 }
 # ///////////////////////////// BackEnd ASG //////////////////////////
 module "backend-asg" {
-  source             = "./modules/ASG"
-  template-name      = "backend-template"
-  instance-type      = var.instance-type
-  my-key             = aws_key_pair.my_key.key_name
-  user-data          = base64encode(data.template_file.backend_user_data.rendered)
-  security-group-ids = [module.private-sg.sg_id]
-  ASG-name           = "backend-asg"
-  max_size           = 3
-  min_size           = 1
-  desired_capacity   = 2
-  vpc-zone-ids       = [module.vpc.private-subnet-id-1, module.vpc.private-subnet-id-2]
-  target-grps-arn    = [module.priv-alb.target_group_arn]
-  instance-name      = "backend-instance"
-  depends_on         = [module.databases]
+  source                = "./modules/ASG"
+  template-name         = "backend-template"
+  instance-type         = var.instance-type
+  my-key                = aws_key_pair.my_key.key_name
+  instance_profile_name = module.IAM.iam_instance_profile_name
+  user-data             = base64encode(data.template_file.backend_user_data.rendered)
+  security-group-ids    = [module.private-sg.sg_id]
+  ASG-name              = "backend-asg"
+  max_size              = 3
+  min_size              = 1
+  desired_capacity      = 2
+  vpc-zone-ids          = [module.vpc.private-subnet-id-1, module.vpc.private-subnet-id-2]
+  target-grps-arn       = [module.priv-alb.target_group_arn]
+  instance-name         = "backend-instance"
+  depends_on            = [module.databases]
 }
 
 #  ------------------------------------------

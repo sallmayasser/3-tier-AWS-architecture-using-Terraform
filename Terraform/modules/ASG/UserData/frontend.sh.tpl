@@ -15,8 +15,7 @@ cd 3-tier-AWS-architecture-using-Terraform/Frontend
 npm install
 
 # Build with dynamic backend URL from Terraform
-REACT_APP_API_URL="http://${backend_alb_dns}" 
-npm run build
+REACT_APP_API_URL="http://${backend_alb_dns}:3000" npm run build
 
 # Copy build files to Nginx
 cp -r build/* /var/www/html/

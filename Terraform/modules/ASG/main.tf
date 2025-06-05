@@ -21,6 +21,9 @@ resource "aws_launch_template" "my-launch-template" {
   key_name               = var.my-key
   user_data              = var.user-data
   vpc_security_group_ids = var.security-group-ids
+    iam_instance_profile {
+    name = var.instance_profile_name
+  }
 
   lifecycle {
     create_before_destroy = true
@@ -56,5 +59,4 @@ resource "aws_autoscaling_group" "my-ASG" {
   timeouts {
     delete = "15m"
   }
-
 }

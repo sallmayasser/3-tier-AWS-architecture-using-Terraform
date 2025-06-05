@@ -50,3 +50,8 @@ variable "instance-name" {
   type        = string
   description = "the name of the instance to be tagged in ASG"
 }
+
+variable "instance_profile_name" {
+  type        = string
+  description = "the name of IAM instance profile "
+}
